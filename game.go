@@ -21,7 +21,7 @@ func NewGame(date string, id string, homeruns []*Homerun) *Game {
 
 func GetGame(date string, id string) (*Game, error) {
 	year := date[0:4]
-	uri := "http://bis.npb.or.jp/" + year + "/games/s" + date + id + ".html"
+	uri := "http://bis.npb.or.jp/" + year + "/games/s" + id + ".html"
 	doc, err := newGoqueryDocument(uri)
 	if err != nil {
 		return nil, err
@@ -44,7 +44,7 @@ func GetGames(date string) ([]*Game, error) {
 	doc.Find(".contentsgame .contentsinfo a").Each(func(i int, s *goquery.Selection) {
 		href, exists := s.Attr("href")
 		if exists {
-			id := href[9:14]
+			id := href[1:14]
 			var game *Game
 			game, err = GetGame(date, id)
 			games = append(games, game)
