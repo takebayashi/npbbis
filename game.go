@@ -8,13 +8,15 @@ import (
 type Game struct {
 	Date     string
 	Id       string
+	Status   string
 	Homeruns []*Homerun
 }
 
-func NewGame(date string, id string, homeruns []*Homerun) *Game {
+func NewGame(date string, id string, status string, homeruns []*Homerun) *Game {
 	return &Game{
 		Date:     date,
 		Id:       id,
+		Status:   status,
 		Homeruns: homeruns,
 	}
 }
@@ -27,11 +29,18 @@ func GetGame(date string, id string) (*Game, error) {
 		return nil, err
 	}
 
+	// Status
+	var status string
+	doc.Find("#gmdivinfo .gmout").Each(func(i int, s *goquery.Selection) {
+		status = s.Text()
+	})
+
+	// Homeruns
 	hrs := []*Homerun{}
 	doc.Find("#gmdivhr .gmresults").Each(func(i int, s *goquery.Selection) {
 		hrs = append(hrs, parseHomerun(s.Text())...)
 	})
-	return NewGame(date, id, hrs), nil
+	return NewGame(date, id, status, hrs), nil
 }
 
 func GetGames(date string) ([]*Game, error) {
