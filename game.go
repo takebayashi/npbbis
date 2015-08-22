@@ -12,15 +12,6 @@ type Game struct {
 	Homeruns []*Homerun
 }
 
-func NewGame(date string, id string, status string, homeruns []*Homerun) *Game {
-	return &Game{
-		Date:     date,
-		Id:       id,
-		Status:   status,
-		Homeruns: homeruns,
-	}
-}
-
 func GetGame(date string, id string) (*Game, error) {
 	year := date[0:4]
 	uri := "http://bis.npb.or.jp/" + year + "/games/s" + id + ".html"
@@ -40,7 +31,12 @@ func GetGame(date string, id string) (*Game, error) {
 	doc.Find("#gmdivhr .gmresults").Each(func(i int, s *goquery.Selection) {
 		hrs = append(hrs, parseHomerun(s.Text())...)
 	})
-	return NewGame(date, id, status, hrs), nil
+	return &Game{
+		Date:     date,
+		Id:       id,
+		Status:   status,
+		Homeruns: hrs,
+	}, nil
 }
 
 func GetGames(date string) ([]*Game, error) {
